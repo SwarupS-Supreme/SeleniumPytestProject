@@ -10,11 +10,21 @@ load_dotenv()
 @pytest.fixture()
 def driver():
     opts = Options()
-    opts.add_experimental_option("prefs",{
+    # Required for CI
+    opts.add_argument("--headless=new")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument("--disable-dev-shm-usage")
+
+    # Good for stable automation
+    opts.add_experimental_option("prefs", {
         "credentials_enable_service": False,
         "profile_password_manager_enabled": False,
         "profile.password_manager_leak_detection": False
     })
+
+    driver = webdriver.Chrome(options=opts)
+    yield driver
+    driver.quit()
     driver = webdriver.Chrome(options=opts)
     driver.maximize_window()
 
